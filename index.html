@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="manifest" href="manifest.json">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101510">
+<title>NEXUS NUTRI</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    background: #101510;
+    color: #f2f5f2;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 0 30px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.logo span {
+    color: #78ed91;
+}
+
+.status {
+    color: #78ed91;
+    font-size: 12px;
+}
+
+h1 {
+    font-size: 27px;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #a4afa5;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: #1b231c;
+    border: 1px solid #303b31;
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.card h2 {
+    font-size: 17px;
+    margin: 0 0 12px;
+}
+
+.muted {
+    color: #a4afa5;
+    font-size: 13px;
+}
+
+.water-number {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 14px 0 5px;
+}
+
+.water-number span {
+    color: #78ed91;
+}
+
+.progress {
+    height: 9px;
+    background: #303b31;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 18px 0 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #78ed91;
+    transition: width .25s;
+}
+
+button {
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.water-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.water-buttons button {
+    flex: 1;
+    color: #dfffe5;
+    background: #304b35;
+}
+
+.primary {
+    background: #78ed91;
+    color: #102014;
+    width: 100%;
+    margin-top: 12px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.module {
+    background: #1b231c;
+    border: 1px solid #303b31;
+    border-radius: 16px;
+    padding: 17px 12px;
+    color: #f2f5f2;
+    text-align: left;
+    min-height: 120px;
+}
+
+.icon {
+    font-size: 27px;
+    margin-bottom: 13px;
+}
+
+.module strong {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.module small {
+    color: #a4afa5;
+    font-size: 12px;
+}
+
+.notice {
+    font-size: 12px;
+    color: #a4afa5;
+    text-align: center;
+    margin: 25px 0 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">NEXUS<span>.</span></div>
+    <div class="status">● SISTEMA INICIAL</div>
+</header>
+
+<main>
+    <section id="diaryScreen" class="card" hidden>
+        <h2>🔐 NEXUS DIÁRIO</h2>
+        <p class="muted">Seu espaço pessoal.</p>
+
+        <div id="diarySetup" hidden>
+            <h3>🛡️ Configurar proteção</h3>
+            <p class="muted">Escolha como deseja proteger seu diário.</p>
+
+            <label for="diaryMethod">Método de acesso</label>
+            <select id="diaryMethod" style="width:100%;padding:12px;margin:8px 0">
+                <option value="pin">🔢 PIN numérico</option>
+                <option value="password">🔑 Senha personalizada</option>
+                <option value="questions">🧠 Perguntas secretas</option>
+            </select>
+
+            <div id="diaryCredentialFields">
+                <label for="diaryNewCode">Crie seu código ou senha</label>
+                <input id="diaryNewCode" type="password" autocomplete="new-password"
+                    placeholder="Digite seu código"
+                    style="width:100%;padding:12px;margin:8px 0">
+
+                <label for="diaryConfirmCode">Confirme o código</label>
+                <input id="diaryConfirmCode" type="password" autocomplete="new-password"
+                    placeholder="Digite novamente"
+                    style="width:100%;padding:12px;margin:8px 0">
+            </div>
+
+            <div id="diaryQuestionFields" hidden>
+                <label for="diaryQuestion">Sua pergunta secreta</label>
+                <input id="diaryQuestion" maxlength="150"
+                    placeholder="Ex.: Qual foi meu primeiro jogo?"
+                    style="width:100%;padding:12px;margin:8px 0">
+
+                <label for="diaryAnswer">Resposta secreta</label>
+                <input id="diaryAnswer" type="password" maxlength="150"
+                    placeholder="Crie sua resposta"
+                    style="width:100%;padding:12px;margin:8px 0">
+            </div>
+
+            <button type="button" class="primary" id="diarySetupSave">
+                Salvar proteção
+            </button>
+            <p id="diarySetupMessage" class="muted" aria-live="polite"></p>
+        </div>
+
+        <div id="diaryAccess">
+            <label for="diaryCode">Código de acesso</label>
+            <input id="diaryCode" type="password"
+                autocomplete="off"
+                placeholder="Digite o código"
+                style="width:100%;padding:12px;margin:10px 0">
+
+            <button type="button" class="primary" id="diaryUnlock">
+                Entrar no diário
+            </button>
+            <p id="diaryAccessMessage" class="muted" aria-live="polite"></p>
+        </div>
+
+        <div id="diaryContent" hidden>
+            <label for="diaryTitle">Título</label>
+            <input id="diaryTitle" maxlength="80"
+                placeholder="Como foi seu dia?"
+                style="width:100%;padding:12px;margin:8px 0">
+
+            <label for="diaryText">Seu registro</label>
+            <textarea id="diaryText" maxlength="5000" rows="6"
+                placeholder="Escreva aqui..."
+                style="width:100%;padding:12px;margin:8px 0;
+                background:#101510;color:#f2f5f2;border:1px solid #303b31;
+                border-radius:10px"></textarea>
+
+            <button type="button" class="primary" id="diarySave">
+                Salvar registro
+            </button>
+            <div id="diaryEntries" style="margin-top:20px"></div>
+        </div>
+
+        <button type="button" id="diaryBack"
+            style="width:100%;margin-top:15px;background:#304b35;color:#dfffe5">
+            ← Voltar ao NEXUS
+        </button>
+    </section>
+    <h1>Seu dia, mais saudável.</h1>
+    <p class="subtitle">Alimentação, hidratação e movimento em um só lugar.</p>
+
+    <section class="card" id="waterSummary" hidden>
+        <h2>💧 Hidratação diária</h2>
+        <div class="muted">Meta configurada: 2 litros</div>
+
+        <div class="water-number">
+            <span id="consumed">0</span>
+            <span style="color:#a4afa5;font-size:16px">/ 2000 ml</span>
+        </div>
+
+        <div class="progress">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+
+        <div class="muted" id="remaining" aria-live="polite">
+            Faltam 2000 ml para atingir a meta.
+        </div>
+
+        <div class="water-buttons">
+            <button type="button" data-water="200">+200 ml</button>
+            <button type="button" data-water="300">+300 ml</button>
+            <button type="button" data-water="500">+500 ml</button>
+        </div>
+
+        <button type="button" class="primary" id="resetWater">
+            Reiniciar registro
+        </button>
+    </section>
+
+    <h2 style="font-size:20px;margin:28px 0 15px">
+        Seus sistemas
+    </h2>
+
+    <div class="grid">
+        <button class="module" type="button" data-module="food">
+            <div class="icon">🍎</div>
+            <strong>Alimentação</strong>
+            <small>Registro de refeições</small>
+        </button>
+
+        <button class="module" type="button" data-module="gym">
+            <div class="icon">💪</div>
+            <strong>Academia</strong>
+            <small>Registro de treinos</small>
+        </button>
+
+        <button class="module" type="button" data-module="diary">
+            <div class="icon">🔐</div>
+            <strong>Diário Pessoal</strong>
+            <small>Registros privados</small>
+        </button>
+
+        <button class="module" type="button" data-module="water">
+            <div class="icon">💧</div>
+            <strong>Hidratação</strong>
+            <small>Meta e histórico de água</small>
+        </button>
+
+       
+
+    </div>
+    <section class="card" id="waterControls" hidden>
+      <h2>💧 Controle de água</h2>
+      <label for="dailyGoal">Sua meta diária (ml):</label>
+      <input id="dailyGoal" type="number" min="1" max="20000" value="2000"
+        style="width:100%;padding:10px;margin:8px 0">
+      <button type="button" id="saveGoal">Salvar meta</button>
+      <p id="goalMessage">Meta diária: 2.000 ml</p>
+      <h1 id="waterAmount">0 ml</h1>
+      <button data-water="200">+200 ml</button>
+      <button data-water="300">+300 ml</button>
+      <button data-water="500">+500 ml</button>
+      <button id="resetWater">Zerar</button>
+      <p id="waterMessage"></p>
+      <button type="button" id="waterBack"
+        style="width:100%;margin-top:15px;background:#304b35;color:#dfffe5">
+        ← Voltar ao painel
+      </button>
+    </section>
+    <section class="card" id="historyCard" hidden>
+      <h2>📅 Histórico de hidratação</h2>
+      <p class="muted">Consulte seu consumo dos dias anteriores.</p>
+      <div id="waterHistory">Seu histórico aparecerá aqui.</div>
+    </section>
+
+    <script>
+let dailyGoal = Number(localStorage.getItem('nexusDailyGoal')) || 2000;
+
+function localDateKey(date = new Date()) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+let todayKey = localDateKey();
+let waterHistory = {};
+
+try {
+  waterHistory = JSON.parse(
+    localStorage.getItem('nexusWaterHistory') || '{}'
+  );
+  if (!waterHistory || typeof waterHistory !== 'object' ||
+      Array.isArray(waterHistory)) waterHistory = {};
+} catch {
+  waterHistory = {};
+}
+
+let water = Number(localStorage.getItem('nexusWater')) || 0;
+const previousDate = localStorage.getItem('nexusWaterDate');
+
+if (previousDate && previousDate !== todayKey) {
+  waterHistory[previousDate] = {
+    water: Math.max(0, water),
+    goal: dailyGoal
+  };
+  water = 0;
+  localStorage.setItem('nexusWater', '0');
+}
+
+localStorage.setItem('nexusWaterDate', todayKey);
+
+function renderWaterHistory() {
+  const box = document.getElementById('waterHistory');
+  if (!box) return;
+
+  const dates = Object.keys(waterHistory)
+    .filter(date => /^\d{4}-\d{2}-\d{2}$/.test(date))
+    .sort((a, b) => b.localeCompare(a));
+
+  if (dates.length === 0) {
+    box.textContent = 'Seu histórico aparecerá aqui.';
+    return;
+  }
+
+  box.replaceChildren();
+
+  dates.forEach(date => {
+    const entry = waterHistory[date];
+    const row = document.createElement('div');
+    row.style.cssText =
+      'padding:12px 0;border-bottom:1px solid #303030';
+
+    const title = document.createElement('strong');
+    const [year, month, day] = date.split('-');
+    title.textContent = `${day}/${month}/${year}`;
+
+    const details = document.createElement('p');
+    details.style.margin = '6px 0 0';
+    details.textContent =
+      `${Number(entry.water) || 0} ml de ${Number(entry.goal) || 2000} ml`;
+
+    row.append(title, details);
+    box.appendChild(row);
+  });
+}
+
+const amount = document.getElementById('waterAmount');
+const message = document.getElementById('waterMessage');
+const goalInput = document.getElementById('dailyGoal');
+const goalMessage = document.getElementById('goalMessage');
+const saveGoal = document.getElementById('saveGoal');
+
+function updateWater() {
+  localStorage.setItem('nexusWater', water);
+  localStorage.setItem('nexusWaterDate', todayKey);
+
+  waterHistory[todayKey] = {
+    water: water,
+    goal: dailyGoal
+  };
+  localStorage.setItem('nexusWaterHistory', JSON.stringify(waterHistory));
+  renderWaterHistory();
+
+  const consumed = document.getElementById('consumed');
+  const progress = document.getElementById('progress');
+  const remaining = document.getElementById('remaining');
+  const label = document.querySelector('.water-number span:nth-child(2)');
+
+  if (amount) amount.textContent = water + ' ml';
+  if (consumed) consumed.textContent = water;
+  if (label) label.textContent = '/ ' + dailyGoal.toLocaleString('pt-BR') + ' ml';
+  if (progress) progress.style.width =
+    Math.min(water / dailyGoal * 100, 100) + '%';
+
+  const msg = water >= dailyGoal
+    ? 'Meta diária atingida!'
+    : 'Faltam ' + (dailyGoal - water) + ' ml para atingir a meta.';
+
+  if (remaining) remaining.textContent = msg;
+  if (message) message.textContent = msg;
+  if (goalMessage) goalMessage.textContent =
+    'Meta diária: ' + dailyGoal.toLocaleString('pt-BR') + ' ml';
+}
+
+document.querySelectorAll('[data-water]').forEach(button => {
+  button.addEventListener('click', () => {
+    water += Number(button.dataset.water);
+    updateWater();
+  });
+});
+
+document.querySelectorAll('#resetWater').forEach(button => {
+  button.addEventListener('click', () => {
+    water = 0;
+    updateWater();
+  });
+});
+
+
+const diaryMethod = document.getElementById('diaryMethod');
+const diaryCredentialFields = document.getElementById('diaryCredentialFields');
+const diaryQuestionFields = document.getElementById('diaryQuestionFields');
+const diaryNewCode = document.getElementById('diaryNewCode');
+
+
+const diarySetup = document.getElementById('diarySetup');
+const diaryAccess = document.getElementById('diaryAccess');
+const diarySetupSave = document.getElementById('diarySetupSave');
+const diarySetupMessage = document.getElementById('diarySetupMessage');
+const diaryConfirmCode = document.getElementById('diaryConfirmCode');
+const diaryQuestion = document.getElementById('diaryQuestion');
+const diaryAnswer = document.getElementById('diaryAnswer');
+
+async function hashDiarySecret(value) {
+  const bytes = new TextEncoder().encode(value.trim());
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest))
+    .map(byte => byte.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+diarySetupSave.addEventListener('click', async () => {
+  const method = diaryMethod.value;
+  let secret = '';
+
+  if (method === 'questions') {
+    if (!diaryQuestion.value.trim() || !diaryAnswer.value.trim()) {
+      diarySetupMessage.textContent = 'Preencha a pergunta e a resposta secreta.';
+      return;
+    }
+    secret = diaryAnswer.value.trim();
+  } else {
+    const first = diaryNewCode.value.trim();
+    const confirm = diaryConfirmCode.value.trim();
+
+    if (!first || !confirm) {
+      diarySetupMessage.textContent = 'Preencha e confirme seu código.';
+      return;
+    }
+    if (first !== confirm) {
+      diarySetupMessage.textContent = 'Os códigos não são iguais.';
+      return;
+    }
+    if (method === 'pin' && !/^\d{4,12}$/.test(first)) {
+      diarySetupMessage.textContent = 'O PIN deve ter de 4 a 12 números.';
+      return;
+    }
+    if (method === 'password' && first.length < 8) {
+      diarySetupMessage.textContent = 'A senha deve ter pelo menos 8 caracteres.';
+      return;
+    }
+    secret = first;
+  }
+
+  try {
+    const config = {
+      method,
+      secretHash: await hashDiarySecret(secret),
+      question: method === 'questions' ? diaryQuestion.value.trim() : ''
+    };
+
+    localStorage.setItem('nexusDiarySecurity', JSON.stringify(config));
+    diarySetupMessage.textContent = 'Proteção salva neste dispositivo!';
+    diaryNewCode.value = '';
+    diaryConfirmCode.value = '';
+    diaryAnswer.value = '';
+
+    setTimeout(() => {
+      diarySetup.hidden = true;
+      diaryAccess.hidden = false;
+      diaryAccessMessage.textContent = method === 'questions'
+        ? 'Pergunta secreta: ' + config.question
+        : 'Proteção configurada. Digite seu acesso.';
+    }, 700);
+  } catch (error) {
+    diarySetupMessage.textContent = 'Não foi possível salvar neste navegador.';
+  }
+});
+
+
+const diaryCode = document.getElementById('diaryCode');
+const diaryUnlock = document.getElementById('diaryUnlock');
+const diaryAccessMessage = document.getElementById('diaryAccessMessage');
+const diaryContent = document.getElementById('diaryContent');
+
+
+const diaryTitle = document.getElementById('diaryTitle');
+const diaryText = document.getElementById('diaryText');
+const diarySave = document.getElementById('diarySave');
+const diaryEntries = document.getElementById('diaryEntries');
+
+function getDiaryEntries() {
+  try {
+    return JSON.parse(localStorage.getItem('nexusDiaryEntries') || '[]');
+  } catch (error) {
+    return [];
+  }
+}
+
+function loadDiaryEntries() {
+  const entries = getDiaryEntries();
+  diaryEntries.replaceChildren();
+
+  if (entries.length === 0) {
+    const empty = document.createElement('p');
+    empty.className = 'muted';
+    empty.textContent = 'Nenhum registro salvo ainda.';
+    diaryEntries.appendChild(empty);
+    return;
+  }
+
+  entries.forEach((entry) => {
+    const card = document.createElement('article');
+    card.style.cssText =
+      'border:1px solid #303b31;border-radius:10px;padding:12px;margin:10px 0';
+
+    const title = document.createElement('h3');
+    title.textContent = entry.title;
+
+    const date = document.createElement('small');
+    date.className = 'muted';
+    date.textContent = entry.date;
+
+    const body = document.createElement('p');
+    body.style.whiteSpace = 'pre-wrap';
+    body.textContent = entry.text;
+
+    card.append(title, date, body);
+    diaryEntries.appendChild(card);
+  });
+}
+
+diarySave.addEventListener('click', () => {
+  const title = diaryTitle.value.trim();
+  const text = diaryText.value.trim();
+
+  if (!title || !text) {
+    alert('Preencha o título e o registro antes de salvar.');
+    return;
+  }
+
+  const entries = getDiaryEntries();
+  entries.unshift({
+    id: Date.now(),
+    title,
+    text,
+    date: new Date().toLocaleString('pt-BR')
+  });
+
+  try {
+    localStorage.setItem('nexusDiaryEntries', JSON.stringify(entries));
+    diaryTitle.value = '';
+    diaryText.value = '';
+    loadDiaryEntries();
+    alert('Registro salvo!');
+  } catch (error) {
+    alert('Não foi possível salvar. O armazenamento pode estar cheio.');
+  }
+});
+
+function refreshDiaryAccess() {
+  const raw = localStorage.getItem('nexusDiarySecurity');
+
+  if (!raw) {
+    diarySetup.hidden = false;
+    diaryAccess.hidden = true;
+    diaryContent.hidden = true;
+    return;
+  }
+
+  try {
+    const config = JSON.parse(raw);
+    diarySetup.hidden = true;
+    diaryAccess.hidden = false;
+    diaryContent.hidden = true;
+
+    if (config.method === 'questions') {
+      diaryAccessMessage.textContent =
+        'Pergunta secreta: ' + config.question;
+      diaryCode.placeholder = 'Digite a resposta secreta';
+    } else {
+      diaryAccessMessage.textContent =
+        config.method === 'pin'
+          ? 'Digite seu PIN para entrar.'
+          : 'Digite sua senha para entrar.';
+      diaryCode.placeholder =
+        config.method === 'pin' ? 'Seu PIN' : 'Sua senha';
+    }
+  } catch (error) {
+    diaryAccessMessage.textContent =
+      'Configuração inválida. Configure a proteção novamente.';
+    diarySetup.hidden = false;
+    diaryAccess.hidden = true;
+  }
+}
+
+diaryUnlock.addEventListener('click', async () => {
+  const raw = localStorage.getItem('nexusDiarySecurity');
+
+  if (!raw) {
+    refreshDiaryAccess();
+    return;
+  }
+
+  try {
+    const config = JSON.parse(raw);
+    const enteredHash = await hashDiarySecret(diaryCode.value);
+
+    if (enteredHash !== config.secretHash) {
+      diaryAccessMessage.textContent = 'Acesso incorreto. Tente novamente.';
+      diaryCode.value = '';
+      return;
+    }
+
+    diaryAccessMessage.textContent = '';
+    diaryCode.value = '';
+    diaryAccess.hidden = true;
+    diarySetup.hidden = true;
+    diaryContent.hidden = false;
+    loadDiaryEntries();
+  } catch (error) {
+    diaryAccessMessage.textContent = 'Não foi possível verificar o acesso.';
+  }
+});
+
+refreshDiaryAccess();
+
+function updateDiarySetupFields() {
+  const method = diaryMethod.value;
+  const isQuestions = method === 'questions';
+
+  diaryCredentialFields.hidden = isQuestions;
+  diaryQuestionFields.hidden = !isQuestions;
+
+  diaryNewCode.type = method === 'pin' ? 'password' : 'password';
+  diaryNewCode.inputMode = method === 'pin' ? 'numeric' : 'text';
+  diaryNewCode.placeholder = method === 'pin'
+    ? 'Crie um PIN numérico'
+    : 'Crie uma senha';
+}
+
+diaryMethod.addEventListener('change', updateDiarySetupFields);
+updateDiarySetupFields();
+
+const diaryScreen = document.getElementById('diaryScreen');
+const waterSummary = document.getElementById('waterSummary');
+const waterControls = document.getElementById('waterControls');
+const historyCard = document.getElementById('historyCard');
+
+const mainContent = [...document.querySelector('main').children]
+  .filter(element =>
+    element !== diaryScreen &&
+    element !== waterSummary &&
+    element !== waterControls &&
+    element !== historyCard
+  );
+
+function showHome() {
+  diaryScreen.hidden = true;
+  waterSummary.hidden = true;
+  waterControls.hidden = true;
+  historyCard.hidden = true;
+  mainContent.forEach(element => element.hidden = false);
+}
+
+function showWater() {
+  diaryScreen.hidden = true;
+  mainContent.forEach(element => element.hidden = true);
+  waterSummary.hidden = false;
+  waterControls.hidden = false;
+  historyCard.hidden = false;
+  window.scrollTo(0, 0);
+}
+
+document.querySelectorAll('[data-module]').forEach(button => {
+  button.addEventListener('click', () => {
+    if (button.dataset.module === 'diary') {
+      showHome();
+      mainContent.forEach(element => element.hidden = true);
+      diaryScreen.hidden = false;
+      window.scrollTo(0, 0);
+    } else if (button.dataset.module === 'water') {
+      showWater();
+    } else {
+      alert('O módulo ' + button.dataset.module + ' será desenvolvido em breve!');
+    }
+  });
+});
+
+document.getElementById('diaryBack').addEventListener('click', () => {
+  showHome();
+  window.scrollTo(0, 0);
+});
+
+document.getElementById('waterBack').addEventListener('click', () => {
+  showHome();
+  window.scrollTo(0, 0);
+});
+
+if (goalInput) goalInput.value = dailyGoal;
+
+if (saveGoal) {
+  saveGoal.addEventListener('click', () => {
+    const chosen = Number(goalInput.value);
+
+    if (!Number.isFinite(chosen) || chosen < 1 || chosen > 20000) {
+      alert('Escolha uma meta entre 1 e 20.000 ml.');
+      return;
+    }
+
+    dailyGoal = Math.round(chosen);
+    localStorage.setItem('nexusDailyGoal', dailyGoal);
+    updateWater();
+    alert('Meta salva!');
+  });
+}
+
+updateWater();
+renderWaterHistory();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .catch(err => console.error('Erro no NEXUS offline:', err));
+  });
+}
+</script>
+</body>
+</html>
